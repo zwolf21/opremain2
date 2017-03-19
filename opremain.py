@@ -3,7 +3,7 @@ from operator import itemgetter
 import sys, os
 import xlrd
 
-from db import drugDB
+from db import drugDB, reportElm
 
 
 class ExcelParser:
@@ -174,8 +174,159 @@ if __name__ == '__main__':
 		ws.write(appen_r+r, 8, row['폐기량__sum'], formats[drugDB[row['약품코드']]['amount_unit']])
 
 
-	wb.add_worksheet('보고서')
 
+	ws2 = wb.add_worksheet('보고서')
+
+	ws2.set_column('A:A',12)	# 제조자
+	ws2.set_column('B:B',25)	# 약품명
+	ws2.set_column('C:C',5)		# 구분
+	ws2.set_column('D:D',20)	# 성분명
+	ws2.set_column('E:E',5)		# 제형
+	ws2.set_column('F:F',15)	# 제조번호
+	ws2.set_column('G:G',12)	# 유효기한
+	ws2.set_column('H:H',9)		# 폐기량
+	ws2.set_column('I:I',5)		# 개수
+	ws2.set_column('J:J',5)		# 규격
+
+
+
+	y, m, d = last_date.split('-')
+	title2 = '{}년 {}월 잔여마약류 폐기 결과보고'.format(y, m)
+
+	cr = 0
+	ws2.merge_range(cr, 0, cr, 9, title2, formats['title'])
+	cr+=1
+
+	fm1 = wb.add_format({'align': 'left', 'bold': True, 'font_size':15, 'border':True})
+	ws2.merge_range(cr, 0, cr, 9, '보고인(공무원)', fm1)
+	cr+=1
+
+	fm2 = wb.add_format({'align': 'center', 'font_size': 12, 'bold': True, 'border':True})
+	ws2.merge_range(cr,0,cr,1, '성명', fm2)
+	ws2.merge_range(cr,2,cr,3, '생년월일', fm2)
+	ws2.merge_range(cr,4,cr,5, '전화번호', fm2)
+	ws2.merge_range(cr,6,cr,7, '등록번호', fm2)
+	ws2.merge_range(cr,8,cr,9, '허가종별', fm2)
+	cr+=1
+
+	fm3 = wb.add_format({'align':'center', 'font_size': 12, 'border':True})
+	ws2.merge_range(cr, 0, cr, 1, reportElm['repoter']['name'], fm3)
+	ws2.merge_range(cr, 2, cr, 3, reportElm['repoter']['birth'], fm3)
+	ws2.merge_range(cr, 4, cr, 5, reportElm['repoter']['tel'], fm3)
+	ws2.merge_range(cr, 6, cr, 7, reportElm['repoter']['assign_num'], fm3)
+	ws2.merge_range(cr, 8, cr, 9, reportElm['repoter']['perm_class'], fm3)
+	cr +=1
+
+	fm4 = wb.add_format({'align':'center', 'font_size': 15, 'valign':'vcenter', 'border':True})
+	ws2.merge_range(cr, 0, cr+1, 1, '업소명칭', fm4)
+	ws2.merge_range(cr, 2, cr+1, 3, '대표자', fm4)
+
+	ws2.merge_range(cr, 4, cr, 9, '업소 소재지', fm3)
+	cr+=1
+
+	ws2.merge_range(cr, 4, cr, 5, '지역', fm3)
+	ws2.merge_range(cr, 6, cr, 9, '세부주소', fm3)
+	cr+=1
+
+	fm5 = wb.add_format({'align':'center', 'font_size': 10, 'border':True})
+	ws2.merge_range(cr, 0, cr, 1, reportElm['repoter']['market'], fm5)
+	ws2.merge_range(cr, 2, cr, 3, reportElm['repoter']['name'], fm5)
+	ws2.merge_range(cr, 4, cr, 5, reportElm['repoter']['region'], fm5)
+	ws2.merge_range(cr, 6, cr, 9, reportElm['repoter']['address'], fm5)
+	cr+=1
+
+	ws2.merge_range(cr, 0, cr, 9, "")
+	cr+=1
+
+	ws2.merge_range(cr, 0, cr, 9, '폐기정보', fm1)
+	cr+=1
+
+	ws2.merge_range(cr, 0, cr, 1, '폐기일시', fm2)
+	ws2.merge_range(cr, 2, cr, 9, reportElm['remainInfo']['date'], fm2)
+	cr+=1
+
+	ws2.merge_range(cr, 0, cr, 1, '입회자(부서 및 성명)', fm5)
+	ws2.merge_range(cr, 2, cr, 3, '폐기자 (부서 및 성명)', fm5)
+	ws2.merge_range(cr, 4, cr, 7, '폐기장소', fm5)
+	ws2.merge_range(cr, 8, cr, 9, '폐기방법', fm5)
+	cr+=1
+
+	ws2.merge_range(cr, 0, cr, 1, reportElm['remainInfo']['observer'], fm5)
+	ws2.merge_range(cr, 2, cr, 3, reportElm['remainInfo']['supervisor'], fm5)
+	ws2.merge_range(cr, 4, cr, 7, reportElm['remainInfo']['place'], fm5)
+	ws2.merge_range(cr, 8, cr, 9, reportElm['remainInfo']['method'], fm5)
+	cr+=1
+
+	ws2.merge_range(cr, 0, cr, 6, '사유', fm5)
+	ws2.merge_range(cr, 7, cr, 9, '세부사유', fm5)
+	cr+=1
+
+	ws2.merge_range(cr, 0, cr, 6, reportElm['remainInfo']['reason'], fm5)
+	ws2.merge_range(cr, 7, cr, 9, reportElm['remainInfo']['reasonDetail'], fm5)
+	cr+=1
+
+	ws2.merge_range(cr, 0, cr, 9, "")
+	cr+=1
+
+	ws2.merge_range(cr, 0, cr, 9, '폐기마약류', fm1)
+	cr+=1
+
+	fm7 = wb.add_format({'align':'center', 'border':True})
+	ws2.write(cr, 0, '제조자(수입자)명', fm7)
+	ws2.write(cr, 1, '약품명', fm7)
+	ws2.write(cr, 2, '구분', fm7)
+	ws2.write(cr, 3, '성분명', fm7)
+	ws2.write(cr, 4, '제형', fm7)
+	ws2.write(cr, 5, '제조번호', fm7)
+	ws2.write(cr, 6, '유효기한', fm7)
+	ws2.write(cr, 7, '폐기량', fm7)
+	ws2.write(cr, 8, '개수', fm7)
+	ws2.write(cr, 9, '규격', fm7)
+	cr+=1
+
+
+	fm6 = wb.add_format({'border':True})
+	ml_format = wb.add_format({'num_format': '0.00 "ml"', 'border':True })
+	mg_format = wb.add_format({'num_format': '0.00 "mg"', 'border':True })
+	g_format = wb.add_format({'num_format': '0.00 "g"', 'border':True })
+
+	formats = \
+	{
+		'title': title_format,
+		'float': float_format,
+		'ml': ml_format,
+		'mg': mg_format,
+		'g': g_format,
+	}
+	
+	for r, row in enumerate(grp, cr):
+		key = row['약품코드']
+		firm = drugDB[key]['firm']
+		name = drugDB[key]['name']
+		cl = drugDB[key]['class']
+		component = drugDB[key]['component']
+		shape = drugDB[key]['shape']
+		lot_num = " "
+		expire = " "
+		amount = row['폐기량__sum']
+		fm_amount = formats[drugDB[key]['amount_unit']]
+		count = row['폐기약품명__len']
+		std_unit = drugDB[key]['std_unit']
+		
+		ws2.write(r, 0, firm, fm6)
+		ws2.write(r, 1, name, fm6)
+		ws2.write(r, 2, cl, fm6)
+		ws2.write(r, 3, component, fm6)
+		ws2.write(r, 4, shape, fm6)
+		ws2.write(r, 5, lot_num, fm6)
+		ws2.write(r, 6, expire, fm6)
+		ws2.write(r, 7, amount, fm_amount)
+		ws2.write(r, 8, count, fm6)
+		ws2.write(r, 9, std_unit, fm6)
+
+
+
+	print(grp[0]['약품코드'])
 
 	wb.close()
 	os.startfile(fname)
