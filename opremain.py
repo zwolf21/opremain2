@@ -268,7 +268,7 @@ if __name__ == '__main__':
 	ws2.merge_range(cr, 0, cr, 9, "")
 	cr+=1
 
-	ws2.merge_range(cr, 0, cr, 9, '폐기마약류', fm1)
+	ws2.merge_range(cr, 0, cr, 9, '폐기마약류 {}~{}'.format(first_date, last_date), fm1)
 	cr+=1
 
 	fm7 = wb.add_format({'align':'center', 'border':True})
